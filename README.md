@@ -308,7 +308,7 @@ The agent is not an invoice-only script. The architecture decouples reasoning, m
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
+git clone  https://github.com/Surendra571/autonomous-ai-task-worker.git
 cd autonomous-ai-task-worker
 
 # 2. Create and activate a Python 3.12 virtual environment
