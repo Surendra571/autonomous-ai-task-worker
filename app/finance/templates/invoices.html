@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Invoices - Finance Portal{% endblock %}
+
+{% block content %}
+<div class="card" data-testid="invoices-page">
+    <div class="card-header">
+        <div>
+            <h1 class="card-title" data-testid="invoices-title">Vendor Invoices</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Search, inspect, and audit accounts payable records</p>
+        </div>
+        <div>
+            <a href="/finance/invoices/new" class="btn btn-primary" data-testid="link-create-invoice">+ Create Invoice</a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Form -->
+    <form action="/finance/invoices" method="get" style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;" data-testid="search-form">
+        <div style="flex: 1; min-width: 240px;">
+            <input type="text" name="q" value="{{ query or '' }}" placeholder="Search by vendor, invoice # or description..." data-testid="search-input">
+        </div>
+        <div style="width: 160px;">
+            <select name="status" data-testid="status-filter">
+                <option value="ALL" {% if not current_status or current_status == 'ALL' %}selected{% endif %}>All Statuses</option>
+                <option value="PENDING" {% if current_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+                <option value="PAID" {% if current_status == 'PAID' %}selected{% endif %}>PAID</option>
+                <option value="OVERDUE" {% if current_status == 'OVERDUE' %}selected{% endif %}>OVERDUE</option>
+                <option value="REJECTED" {% if current_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-outline" data-testid="search-button">Search</button>
+        {% if query or current_status %}
+        <a href="/finance/invoices" class="btn btn-outline" style="color: var(--text-muted);" data-testid="clear-search-button">Reset</a>
+        {% endif %}
+    </form>
+
+    <!-- Invoices List Table -->
+    <div style="overflow-x: auto;">
+        <table class="data-table" data-testid="invoices-table">
+            <thead>
+                <tr>
+                    <th>Invoice Number</th>
+                    <th>Vendor Name</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr data-testid="invoice-row-{{ inv.invoice_number }}">
+                    <td>
+                        <a href="/finance/invoices/{{ inv.id }}" style="font-weight: 600; color: var(--primary); text-decoration: none;" data-testid="invoice-number-link-{{ inv.invoice_number }}">
+                            {{ inv.invoice_number }}
+                        </a>
+                    </td>
+                    <td data-testid="vendor-{{ inv.invoice_number }}">{{ inv.vendor_name }}</td>
+                    <td><strong>${{ "%.2f"|format(inv.amount) }}</strong></td>
+                    <td>{{ inv.currency }}</td>
+                    <td>{{ inv.issue_date }}</td>
+                    <td data-testid="due-date-{{ inv.invoice_number }}">{{ inv.due_date }}</td>
+                    <td><span class="badge badge-{{ inv.status }}" data-testid="status-{{ inv.invoice_number }}">{{ inv.status }}</span></td>
+                    <td>
+                        <a href="/finance/invoices/{{ inv.id }}" class="btn btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.8rem;" data-testid="view-invoice-{{ inv.invoice_number }}">
+                            Open
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;" data-testid="empty-invoices-message">
+                        No vendor invoices matched your search criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

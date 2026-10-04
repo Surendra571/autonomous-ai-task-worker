@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice {{ invoice.invoice_number }} - Finance Portal{% endblock %}
+
+{% block content %}
+<div style="max-width: 760px; margin: 1rem auto;">
+    {% if success_msg %}
+    <div class="alert-success" data-testid="invoice-saved-success-banner">
+        ✅ <strong>Invoice Successfully Saved!</strong> The invoice has been recorded into the internal finance ledger.
+    </div>
+    {% endif %}
+
+    <div class="card" data-testid="invoice-detail-card">
+        <div class="card-header">
+            <div>
+                <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Accounts Payable Record</div>
+                <h1 class="card-title" style="margin-top: 0.25rem;" data-testid="detail-header-number">{{ invoice.invoice_number }}</h1>
+            </div>
+            <div>
+                <span class="badge badge-{{ invoice.status }}" style="font-size: 0.85rem; padding: 0.35rem 0.8rem;" data-testid="detail-header-status">
+                    {{ invoice.status }}
+                </span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">INVOICE ID (SYSTEM UUID)</label>
+                <div style="font-family: monospace; font-size: 0.9rem;" data-testid="detail-invoice-id">{{ invoice.id }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">INVOICE NUMBER</label>
+                <div style="font-weight: 600; font-size: 1.1rem; color: var(--primary);" data-testid="detail-invoice-number">{{ invoice.invoice_number }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">VENDOR NAME</label>
+                <div style="font-size: 1.05rem; font-weight: 600;" data-testid="detail-vendor-name">{{ invoice.vendor_name }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">TOTAL AMOUNT</label>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #15803d;" data-testid="detail-amount-container">
+                    $<span data-testid="detail-amount">{{ "%.2f"|format(invoice.amount) }}</span>
+                    <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 400;" data-testid="detail-currency">{{ invoice.currency }}</span>
+                </div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">ISSUE DATE</label>
+                <div style="font-size: 1rem;" data-testid="detail-issue-date">{{ invoice.issue_date }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">DUE DATE</label>
+                <div style="font-size: 1rem; font-weight: 600;" data-testid="detail-due-date">{{ invoice.due_date }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">STATUS</label>
+                <div data-testid="detail-status">{{ invoice.status }}</div>
+            </div>
+
+            <div>
+                <label style="color: var(--text-muted); font-size: 0.8rem;">RECORDED IN LEDGER AT</label>
+                <div style="font-size: 0.85rem; color: var(--text-muted);" data-testid="detail-created-at">{{ invoice.created_at.strftime("%Y-%m-%d %H:%M:%S UTC") }}</div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1.25rem; margin-bottom: 1.5rem;">
+            <label style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">LINE ITEMS & DESCRIPTION</label>
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-size: 0.95rem; white-space: pre-wrap;" data-testid="detail-description">
+                {{ invoice.description or "No description provided." }}
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+            <a href="/finance/invoices" class="btn btn-outline" data-testid="back-to-invoices-btn">← Back to Invoices</a>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="/finance/invoices/new" class="btn btn-outline" data-testid="create-another-btn">+ Enter Another</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

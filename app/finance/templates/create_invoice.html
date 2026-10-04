@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Create Invoice - Finance Portal{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px; margin: 1rem auto;">
+    <div class="card" data-testid="create-invoice-card">
+        <div class="card-header">
+            <div>
+                <h1 class="card-title" data-testid="create-invoice-title">Enter New Vendor Invoice</h1>
+                <p style="color: var(--text-muted); font-size: 0.875rem;">Record and submit incoming invoice for accounts payable ledger</p>
+            </div>
+            <a href="/finance/invoices" class="btn btn-outline" data-testid="cancel-invoice-btn">Cancel</a>
+        </div>
+
+        {% if error %}
+        <div class="alert-error" data-testid="create-invoice-error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/finance/invoices" method="post" data-testid="create-invoice-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="invoice_number">Invoice Number *</label>
+                    <input type="text" id="invoice_number" name="invoice_number" placeholder="e.g. INV-2024-001" required value="{{ form_data.invoice_number if form_data else '' }}" data-testid="input-invoice-number">
+                </div>
+
+                <div class="form-group">
+                    <label for="vendor_name">Vendor Name *</label>
+                    <input type="text" id="vendor_name" name="vendor_name" placeholder="e.g. Acme Corp" required value="{{ form_data.vendor_name if form_data else '' }}" data-testid="input-vendor-name">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="amount">Total Amount *</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="0.00" required value="{{ form_data.amount if form_data else '' }}" data-testid="input-amount">
+                </div>
+
+                <div class="form-group">
+                    <label for="currency">Currency *</label>
+                    <select id="currency" name="currency" data-testid="select-currency">
+                        <option value="USD" selected>USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="CAD">CAD ($)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="issue_date">Issue Date *</label>
+                    <input type="date" id="issue_date" name="issue_date" required value="{{ form_data.issue_date if form_data else '' }}" data-testid="input-issue-date">
+                </div>
+
+                <div class="form-group">
+                    <label for="due_date">Due Date *</label>
+                    <input type="date" id="due_date" name="due_date" required value="{{ form_data.due_date if form_data else '' }}" data-testid="input-due-date">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Initial Status</label>
+                <select id="status" name="status" data-testid="select-status">
+                    <option value="PENDING" selected>PENDING</option>
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="PAID">PAID</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Line Items / Description</label>
+                <textarea id="description" name="description" rows="3" placeholder="Provide service details, milestone notes or billing reference..." data-testid="input-description">{{ form_data.description if form_data else '' }}</textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                <a href="/finance/invoices" class="btn btn-outline">Discard</a>
+                <button type="submit" class="btn btn-primary" data-testid="submit-invoice-btn">
+                    Submit & Save Invoice
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

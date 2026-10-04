@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# SQLite
+*.db
+*.sqlite3
+
+# Playwright & Artifacts
+.playwright-browsers/
+data/artifacts/*
+!data/artifacts/.gitkeep
+test-results/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: task_worker_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: task_worker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d task_worker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  task-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autonomous_task_worker
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/task_worker
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-mock-key-for-development}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - INBOX_DIR=/app/data/invoices
+      - ARTIFACTS_DIR=/app/data/artifacts
+      - BROWSER_HEADLESS=true
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data/invoices:/app/data/invoices
+      - ./data/artifacts:/app/data/artifacts
+
+volumes:
+  postgres_data:
+
